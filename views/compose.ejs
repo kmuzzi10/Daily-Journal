@@ -1,0 +1,30 @@
+<%- include ("partials/header.ejs")%>
+
+    <body>
+
+        <h1>Compose</h1>
+        <form class="form-group" action="/compose" method="post">
+            <label for="title">TITLE</label> <br>
+            <div>
+                <span class="input-group-text" id="inputGroup-sizing-default"></span>
+                <input placeholder="Enter Your Title" style="width: 100%;" id="title" name="postTitle" type="text"
+                    class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <br>
+            <label for="post">Post</label> <br>
+            <div class="form-floating">
+                <textarea name="postBody" class="form-control" placeholder="Write Your Post Here" id="floatingTextarea2"
+                    style="height: 100px"></textarea>
+            </div>
+            <br>
+            <button action="post" type="submit" class="btn btn-primary">Publish</button>
+
+        </form>
+
+
+
+
+
+
+
+        <%- include("partials/footer.ejs") %>

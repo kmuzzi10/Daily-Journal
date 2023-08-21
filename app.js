@@ -15,8 +15,11 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
+const postArray = [];
+
 app.get("/",(req,res)=>{
-  res.render("home.ejs",{homeStartingContent:homeStartingContent})
+  res.render("home.ejs",{homeStartingContent:homeStartingContent});
+  console.log(postArray)
 });
 app.get("/home",(req,res)=>{
   res.render("home.ejs",{homeStartingContent:homeStartingContent})
@@ -29,6 +32,21 @@ app.get("/about",(req,res)=>{
 app.get("/contact",(req,res)=>{
   res.render("contact.ejs",{contactContent:contactContent})
 });
+
+app.get("/compose",(req,res)=>{
+  res.render("compose.ejs")
+  
+})
+
+app.post("/compose",(req,res)=>{
+ const formData = {
+  postTitle : req.body.postTitle,
+  postBody : req.body.postBody
+ };
+ postArray.push(formData);
+ res.redirect("/");
+ 
+})
 
 
 
