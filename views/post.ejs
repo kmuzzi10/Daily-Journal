@@ -1,0 +1,11 @@
+<%- include("partials/header.ejs")%>
+
+<%if(locals.stored && locals.storedBody){%>
+    <h1><%=stored %></h1>
+    <p><%=storedBody%></p>
+<%}else{%>
+    <h1><%=stored %></h1>
+<%}%>
+
+
+<%- include("partials/footer.ejs")%>

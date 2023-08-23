@@ -3,8 +3,18 @@
     
             <h1>Home</h1>
             <p><%=homeStartingContent%></p>
-        
-    
+            
+                    
+                        <% postArray.forEach(element=>{%>
+                        <h2><%= element.postTitle%></h2>
+                        <p><%=element.postBody.substring(0,100) +"..."%>
+                            <a href="/posts/<%=element.postTitle%>">ReadMore</a>
+                        </p>
+                        
+                        <%}) %>
+                        
+                       
+                   
 
 
 
