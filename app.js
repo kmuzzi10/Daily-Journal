@@ -54,6 +54,7 @@ app.get("/", (req, res) => {
     postArray: postArray
   });
 });
+// home route
 app.get("/home", (req, res) => {
   res.render("home.ejs", {
     homeStartingContent: homeStartingContent,
