@@ -1,3 +1,8 @@
+html {
+  min-height: 100%;
+  position: relative;
+}
+
 .container-fluid {
     padding-top: 70px;
     padding-bottom: 70px;

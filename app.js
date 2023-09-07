@@ -1,10 +1,10 @@
+//jshint esversion:6
+
 import express from "express";
 import bodyParser from "body-parser";
 import ejs from "ejs";
 import _ from "lodash";
-
-
-
+import mongoose from "mongoose"
 
 const homeStartingContent = `Welcome to our Daily Journal website, your digital sanctuary for reflection, growth, and self-expression. Embark on a journey of introspection and mindfulness as you document the moments, thoughts, and experiences that shape your life's narrative. Our platform is more than just a virtual journal; it's a companion that encourages you to pause, contemplate, and appreciate the intricacies of each day.
 
@@ -37,86 +37,72 @@ Join us on this journey of introspection and growth. Start each day with a renew
 const contactContent = `
 
 Your thoughts and questions are important to us. Whether you're seeking assistance, have suggestions to share, or want to be part of our growing community, we're here to connect. Join the conversation through our vibrant social media presence on [Facebook](https://www.facebook.com/DailyJournalWebsite), [Twitter](https://www.twitter.com/DailyJournalWeb), and [Instagram](https://www.instagram.com/dailyjournalwebsite). For immediate support, our community forums offer a space to engage with fellow journalers. And if you're looking for quick answers, visit our Support Center on the website. We're dedicated to ensuring your experience with us is as enriching as the stories you craft within your journal.`;
-
 const app = express();
 
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+mongoose.connect("mongodb://127.0.0.1:27017/DailyJournal");
 
-const postArray = [];
-
-
-app.get("/", (req, res) => {
-  res.render("home.ejs", {
-    homeStartingContent: homeStartingContent,
-    postArray: postArray
-  });
-});
-// home route
-app.get("/home", (req, res) => {
-  res.render("home.ejs", {
-    homeStartingContent: homeStartingContent,
-    postArray: postArray
-  })
-});
-
-app.get("/about", (req, res) => {
-  res.render("about.ejs", { aboutContent: aboutContent })
-});
-
-app.get("/contact", (req, res) => {
-  res.render("contact.ejs", { contactContent: contactContent })
-});
-
-app.get("/compose", (req, res) => {
-  res.render("compose.ejs")
-
+const journalSchema = mongoose.Schema({
+  title: String,
+  content: String
 })
 
-app.post("/compose", (req, res) => {
-  const formData = {
-    postTitle: req.body.postTitle,
-    postBody: req.body.postBody
-  };
-  postArray.push(formData);
+const Data = mongoose.model("data", journalSchema);
+
+
+
+app.get("/", async function (req, res) {
+  const renderPost = await Data.find({}).exec();
+  res.render("home", {
+    startingContent: homeStartingContent,
+    posts: renderPost
+  });
+});
+
+app.get("/about", function (req, res) {
+  res.render("about", { aboutContent: aboutContent });
+});
+
+app.get("/contact", function (req, res) {
+  res.render("contact", { contactContent: contactContent });
+});
+
+app.get("/compose", function (req, res) {
+  res.render("compose");
+});
+
+app.post("/compose", function (req, res) {
+  //postTitle postBody
+  const article = {
+    title: req.body.postTitle,
+    content: req.body.postBody
+  }
+  Data.insertMany(article);
+
   res.redirect("/");
 
-})
-
-
-
-app.get('/posts/:postName', (req, res) => {
-  const reqTitle = _.lowerCase(req.params.postName);
-  let found = false;
-
-  postArray.forEach(element => {
-    const storedTitle = _.lowerCase(element.postTitle);
-    if (storedTitle === reqTitle) {
-      res.render("post.ejs", { stored: element.postTitle, storedBody: element.postBody });
-      found = true;
-    }
-  });
-
-  if (!found) {
-    res.render("post.ejs", { stored: "Blog not found" });
-  }
 });
 
+app.get("/posts/:postId", async function (req, res) {
+  const id = req.params.postId;
+  try {
+    const post = await Data.findOne({ _id: id }).exec();
+
+    res.render("post", {
+      title: post.title,
+      content: post.content
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
 
 
 
-
-
-
-
-
-
-
-
-
-
+});
 
 app.listen(3000, function () {
   console.log("Server started on port 3000");
